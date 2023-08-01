@@ -392,14 +392,16 @@ def evaluate(
     return {"results": dict(results), "versions": dict(versions)}
 
 
-def make_table(result_dict):
+def make_table(result_dict, output_mode="md"):
     """Generate table of results."""
-    from pytablewriter import MarkdownTableWriter, LatexTableWriter
+    from pytablewriter import MarkdownTableWriter, LatexTableWriter, CsvTableWriter
 
     md_writer = MarkdownTableWriter()
     latex_writer = LatexTableWriter()
+    csv_writer = CsvTableWriter()
     md_writer.headers = ["Task", "Version", "Metric", "Value", "", "Stderr"]
     latex_writer.headers = ["Task", "Version", "Metric", "Value", "", "Stderr"]
+    csv_writer.headers = ["Task", "Version", "Metric", "Value", "", "Stderr"]
 
     values = []
 
@@ -418,8 +420,14 @@ def make_table(result_dict):
             version = ""
     md_writer.value_matrix = values
     latex_writer.value_matrix = values
+    csv_writer.value_matrix = values
 
     # todo: make latex table look good
     # print(latex_writer.dumps())
 
-    return md_writer.dumps()
+    if output_mode == "md":
+        return md_writer.dumps()
+    elif output_mode == "latex":
+        return latex_writer.dumps()
+    elif output_mode == "csv":
+        return csv_writer
