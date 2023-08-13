@@ -30,6 +30,7 @@ def simple_evaluate(
     decontamination_ngrams_path=None,
     write_out=False,
     output_base_path=None,
+    tag="",
 ):
     """Instantiate and evaluate a model on a list of tasks.
 
@@ -112,6 +113,7 @@ def simple_evaluate(
         decontamination_ngrams_path=decontamination_ngrams_path,
         write_out=write_out,
         output_base_path=output_base_path,
+        tag=tag,
     )
 
     # add info about the model and few shot config
@@ -151,6 +153,7 @@ def evaluate(
     decontamination_ngrams_path=None,
     write_out=False,
     output_base_path=None,
+    tag="",
 ):
     """Instantiate and evaluate a model on a list of tasks.
 
@@ -324,6 +327,7 @@ def evaluate(
 
     vals = collections.defaultdict(list)
 
+
     # unpack results and sort back in order and return control to Task
     for (task_name, doc_id), requests in process_res_queue.items():
         requests.sort(key=lambda x: x[0])
@@ -367,6 +371,7 @@ def evaluate(
         if stderr is not None:
             results[task_name][metric + "_stderr"] = stderr(items)
 
+        
     if write_out:
         import json
         import pathlib
@@ -383,7 +388,7 @@ def evaluate(
 
         for task_name, _ in task_dict_items:
             with open(
-                output_base_path.joinpath(f"{task_name}_write_out_info.json"),
+                output_base_path.joinpath(f"{tag}_{task_name}_results.json"),
                 "w",
                 encoding="utf8",
             ) as fp:
@@ -392,7 +397,7 @@ def evaluate(
     return {"results": dict(results), "versions": dict(versions)}
 
 
-def make_table(result_dict, output_mode="md"):
+def make_table(result_dict, format="md"):
     """Generate table of results."""
     from pytablewriter import MarkdownTableWriter, LatexTableWriter, CsvTableWriter
 
@@ -418,16 +423,16 @@ def make_table(result_dict, output_mode="md"):
                 values.append([k, version, m, "%.4f" % v, "", ""])
             k = ""
             version = ""
-    md_writer.value_matrix = values
-    latex_writer.value_matrix = values
-    csv_writer.value_matrix = values
 
     # todo: make latex table look good
     # print(latex_writer.dumps())
 
-    if output_mode == "md":
+    if format == "md":
+        md_writer.value_matrix = values
         return md_writer.dumps()
-    elif output_mode == "latex":
+    elif format == "latex":
+        latex_writer.value_matrix = values
         return latex_writer.dumps()
-    elif output_mode == "csv":
-        return csv_writer
+    elif format == "csv":
+        csv_writer.value_matrix = values
+        return csv_writer.dumps()

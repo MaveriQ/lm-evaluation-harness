@@ -8,7 +8,7 @@ class MorphGPT(HFLM):
     def __init__(
         self,
         device="cuda",
-        pretrained="maveriq/morphgpt-base-200k",
+        pretrained="maveriq/morphgpt-base",
         low_cpu_mem_usage=None,
         subfolder=None,
         revision="main",
