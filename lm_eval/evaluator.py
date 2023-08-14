@@ -370,6 +370,7 @@ def evaluate(
 
         if stderr is not None:
             results[task_name][metric + "_stderr"] = stderr(items)
+            results[task_name][metric + "_nobs"] = len(items)
 
         
     if write_out:

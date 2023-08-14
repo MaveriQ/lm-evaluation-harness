@@ -39,7 +39,7 @@ def main():
     assert not args.provide_description  # not implemented
 
     tag = construct_tags(args)
-    output_file = f"{args.output_path}/{tag}_{args.tasks}_summary.json"
+    output_file = f"{args.output_path}/{tag}_{args.tasks}_summary_nobs.json"
     assert not os.path.exists(output_file), f"Output path {output_file} already exists"
 
     if args.limit:
